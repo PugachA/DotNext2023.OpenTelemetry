@@ -1,0 +1,26 @@
+groups:
+- name: demo_service
+  rules:
+  - alert: demo_service_unhealthy.${ .env }$
+    expr: health{job="${ .app }$", env="${ .env }$"} == 0
+    for: ${ .default_duration }$
+    labels:
+      priority: low
+      severity: warning
+    annotations:
+      summary: "{{ $labels.app }} is unhealthy on '{{ $labels.instance }}'"
+
+  ${- range $key, $value := .entities }$
+  - alert: demo_service_${ $key }$_latency.${ $.env }$
+    expr: |
+      histogram_quantile(${ $value.quantile }$, rate(handler_latency_milliseconds_bucket
+      {message="${ $value.message }$", job="${$.app}$", env="${ $.env }$"}[24h]))/1000/60
+      > ${ $value.latency_minutes }$
+    for: ${ $.default_duration }$
+    labels:
+      priority: medium
+      severity: critical
+    annotations:
+      summary: "Latency for {{ $labels.message }} is above ${ $value.latency_minutes }$ minutes"
+  ${- end }$
+

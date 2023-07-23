@@ -1,0 +1,54 @@
+version: "3.7"
+services:
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.77.0
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "1888:1888"   # pprof extension
+      - "8888:8888"   # Prometheus metrics exposed by the collector http://localhost:8888/metrics
+      - "8889:8889"   # Prometheus exporter metrics http://localhost:8889/metrics
+      - "13133:13133" # health_check extension http://localhost:13133/
+      - "4317:4317"   # OTLP gRPC receiver
+
+  prometheus:
+    image: prom/prometheus:v2.37.1
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    ports:
+      - 9090:9090
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./demo_service_rules.production.yml:/etc/prometheus/rules/demo_service_rules.production.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=1y'
+      - '--web.enable-lifecycle'
+
+  grafana:
+    image: grafana/grafana:9.5.1
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_RENDERING_SERVER_URL=http://renderer:8081/render
+      - GF_RENDERING_CALLBACK_URL=http://grafana:3000/
+      - GF_LOG_FILTERS=rendering:debug
+
+  renderer:
+    image: grafana/grafana-image-renderer:3.7.0
+    ports:
+      - 8081
+
+volumes:
+  prometheus-data: {}
+  grafana-data: {}

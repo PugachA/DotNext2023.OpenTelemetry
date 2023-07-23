@@ -1,0 +1,26 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+
+exporters:
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    metric_expiration: 5m
+    const_labels:
+      env: production
+
+extensions:
+  health_check:
+#  pprof:
+#    endpoint: :1888
+#  zpages:
+#    endpoint: :55679
+
+service:
+  extensions: [health_check]
+  #extensions: [pprof, zpages, health_check]
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      exporters: [prometheus]

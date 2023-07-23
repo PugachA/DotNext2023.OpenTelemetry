@@ -1,0 +1,15 @@
+app: Dotnext.Demo.Service
+env: production
+default_duration: 5m
+
+entities:
+  user:
+    message: UserMessage
+    latency_minutes: 10
+    quantile: 0.95
+    
+  order:
+    message: OrderMessage
+    latency_minutes: 10
+    quantile: 0.95
+
