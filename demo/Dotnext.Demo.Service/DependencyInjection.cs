@@ -40,7 +40,8 @@ public static class DependencyInjection
     {
         services
             .AddHealthChecks()
-            .AddCheck<SampleHealthCheck>("sample");
+            .AddCheck<SampleHealthCheck>("sample1")
+            .AddCheck<SampleHealthCheck>("sample2");
 
         services.AddSingleton<
             IHealthCheckPublisher,

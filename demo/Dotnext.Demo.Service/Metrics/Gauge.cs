@@ -2,19 +2,29 @@
 
 namespace Dotnext.Demo.Service.Metrics;
 
-public class Gauge
+public class Gauge<T> where T : struct
 {
-	private long _value = 0;
+    private readonly object _lock = new();
+    private readonly Dictionary<string, Measurement<T>> _measurements = new();
 
-	public Gauge(Meter meter)
-	{
-		var mes = new Measurement<long>(_value, null);
+    public Gauge(Meter meter, string name, string? unit = null, string? description = null)
+    {
+        meter.CreateObservableGauge(name, () => _measurements.Values, unit, description);
+    }
 
-        meter.CreateObservableGauge("name", () => new Measurement<long>(_value, null));
-	}
+    public void SetValue(T value, KeyValuePair<string, object?>? tag = null)
+    {
+        lock (_lock)
+        {
+            var key = tag.ToString() ?? string.Empty;
+            var tags = tag is null ?
+                    Array.Empty<KeyValuePair<string, object?>>() :
+                    new[] { tag.Value };
 
-	public void SetValue(long value)
-	{
-        Interlocked.Exchange(ref _value, value);
-	}
+            if (_measurements.ContainsKey(key))
+                _measurements[key] = new (value, tags);
+            else
+                _measurements.Add(key, new(value, tags));
+        }
+    }
 }

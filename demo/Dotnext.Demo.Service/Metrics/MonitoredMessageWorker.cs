@@ -1,7 +1,6 @@
 ﻿using Dotnext.Demo.Core.Abstractions;
 using Dotnext.Demo.Core.Domain;
 using System.Diagnostics;
-using System.Diagnostics.Metrics;
 
 namespace Dotnext.Demo.Service.Metrics;
 
@@ -10,27 +9,19 @@ public class MonitoredMessageWorker<TMessage, TEntity> : IMessageWorker<TMessage
     where TMessage : IMessage
 {
     private readonly IMessageWorker<TMessage, TEntity> _messageWorker;
-    private readonly Counter<long> _successCounter;
-    private readonly Counter<long> _failCounter;
+    private readonly OtelMetrics _otelMetrics;
     private readonly KeyValuePair<string, object?> _tag;
-
-    private long _durationMs = 0;
 
     public MonitoredMessageWorker(
         IMessageWorker<TMessage, TEntity> messageWorker,
         OtelMetrics otelMetrics)
     {
         _messageWorker = messageWorker;
+        _otelMetrics = otelMetrics;
         _tag = new KeyValuePair<string, object?>("message", typeof(TMessage).Name);
-        
-        _successCounter = otelMetrics.Meter.CreateCounter<long>("worker.success", "count", "The number of worker success execution");
-        _successCounter.Add(0, _tag);
-        
-        _failCounter = otelMetrics.Meter.CreateCounter<long>("worker.fail", "count", "The number of worker fail execution");
-        _failCounter.Add(0, _tag);
-        
-        var measurement = new Measurement<long>(_durationMs, _tag);
-        otelMetrics.Meter.CreateObservableGauge("worker.duration", () => measurement, "ms", "Worker run duration milliseconds");
+
+        _otelMetrics.WorkerSuccessCounter.Add(0, _tag);
+        _otelMetrics.WorkerFailCounter.Add(0, _tag);
     }
 
     public async Task RunAsync(CancellationToken ct)
@@ -40,16 +31,16 @@ public class MonitoredMessageWorker<TMessage, TEntity> : IMessageWorker<TMessage
         try
         {
             await _messageWorker.RunAsync(ct);
-            _successCounter.Add(1, _tag);
+            _otelMetrics.WorkerSuccessCounter.Add(1, _tag);
         }
         catch (Exception)
         {
-            _failCounter.Add(1, _tag);
+            _otelMetrics.WorkerFailCounter.Add(1, _tag);
             throw;
         }
         finally
         {
-            _durationMs = stopwatch.ElapsedMilliseconds;
+            _otelMetrics.WorkerDurationGauge.SetValue(stopwatch.ElapsedMilliseconds, _tag);
         }
     }
 }
