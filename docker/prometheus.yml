@@ -34,4 +34,4 @@ scrape_configs:
     scrape_interval: 5s
     scheme: http
     static_configs:
-      - targets: ['host.docker.internal:5273']
+      - targets: ['host.docker.internal:5000']

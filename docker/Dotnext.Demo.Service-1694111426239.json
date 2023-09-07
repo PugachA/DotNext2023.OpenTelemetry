@@ -134,7 +134,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "application_uptime_milliseconds{exported_job=\"${app}\", env=\"${env}\", exported_instance=~\"${instance}\"}",
+          "expr": "application_uptime_milliseconds_total{exported_job=\"${app}\", env=\"${env}\", exported_instance=~\"${instance}\"}",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -236,7 +236,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "increase(application_uptime_milliseconds{exported_job=\"${app}\", env=\"${env}\", exported_instance=\"${instance}\"}[1m])",
+          "expr": "increase(application_uptime_milliseconds_total{exported_job=\"${app}\", env=\"${env}\", exported_instance=\"${instance}\"}[1m])",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -424,7 +424,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "health_check{name=\"sample\", exported_job=\"${app}\", env=\"${env}\", exported_instance=\"${instance}\"}",
+          "expr": "health_check{name=~\"sample.*\", exported_job=\"${app}\", env=\"${env}\", exported_instance=\"${instance}\"}",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -1257,7 +1257,7 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values(application_uptime_milliseconds{exported_job=\"${app}\"},env)",
+        "definition": "label_values(application_uptime_milliseconds_total{exported_job=\"${app}\"},env)",
         "hide": 0,
         "includeAll": false,
         "label": "environment",
@@ -1265,7 +1265,7 @@
         "name": "env",
         "options": [],
         "query": {
-          "query": "label_values(application_uptime_milliseconds{exported_job=\"${app}\"},env)",
+          "query": "label_values(application_uptime_milliseconds_total{exported_job=\"${app}\"},env)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -1280,7 +1280,7 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values(application_uptime_milliseconds{exported_job=\"${app}\", env=\"${env}\"},exported_instance)",
+        "definition": "label_values(application_uptime_milliseconds_total{exported_job=\"${app}\", env=\"${env}\"},exported_instance)",
         "hide": 0,
         "includeAll": false,
         "label": "instance",
@@ -1288,7 +1288,7 @@
         "name": "instance",
         "options": [],
         "query": {
-          "query": "label_values(application_uptime_milliseconds{exported_job=\"${app}\", env=\"${env}\"},exported_instance)",
+          "query": "label_values(application_uptime_milliseconds_total{exported_job=\"${app}\", env=\"${env}\"},exported_instance)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -1330,6 +1330,6 @@
   "timezone": "",
   "title": "Dotnext.Demo.Service",
   "uid": "e70b41d4-4e96-421c-88cf-558abe588682",
-  "version": 10,
+  "version": 4,
   "weekStart": ""
 }
