@@ -11,4 +11,8 @@
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.6.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\demo\OpenTelemetry.Instrumentation.Dotnext\OpenTelemetry.Instrumentation.Dotnext.csproj" />
+  </ItemGroup>
+
 </Project>

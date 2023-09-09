@@ -1,3 +1,4 @@
+using OpenTelemetry.Instrumentation.Dotnext;
 using OpenTelemetry.Metrics;
 using System.Diagnostics.Metrics;
 
@@ -9,6 +10,7 @@ builder.Services.AddOpenTelemetry()
     {
         builder
             .AddMeter(meter.Name)
+            .AddUpTimeInstrumentation()
             .AddPrometheusExporter();
     });
 
