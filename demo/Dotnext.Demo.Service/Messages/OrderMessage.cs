@@ -10,4 +10,6 @@ public class OrderMessage : IMessage
     public string ProductName { get; set; }
     public decimal Price { get; set; }
     public DateTime Date { get; set; }
+    public string MessageId { get; set; }
+    public DateTime TimestampUtc { get; set; }
 }

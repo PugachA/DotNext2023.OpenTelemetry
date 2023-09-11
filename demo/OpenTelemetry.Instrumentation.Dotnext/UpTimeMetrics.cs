@@ -15,7 +15,7 @@ internal sealed class UpTimeMetrics : IDisposable
         _meter = new Meter(InstrumentationName, InstrumentationVersion);
         var _ = _meter.CreateObservableCounter(
             "application.uptime",
-            () => (long)UpTimeService.UpTime.TotalMilliseconds,
+            () => (long)UpTimeProvider.GetUpTime().TotalMilliseconds,
             unit: "ms",
             description: "Milliseconds elapsed since application startup");
     }

@@ -2,15 +2,15 @@
 
 namespace OpenTelemetry.Instrumentation.Dotnext;
 
-public class UpTimeService
+public class UpTimeProvider
 {
     private static readonly DateTime StartTime;
 
-    static UpTimeService()
+    static UpTimeProvider()
     {
         using var process = Process.GetCurrentProcess();
         StartTime = process.StartTime;
     }
 
-    public static TimeSpan UpTime => DateTime.Now - StartTime;
+    public static TimeSpan GetUpTime() => DateTime.Now - StartTime;
 }
