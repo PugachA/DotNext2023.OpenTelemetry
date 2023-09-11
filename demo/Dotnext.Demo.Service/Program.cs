@@ -16,8 +16,6 @@ builder.Services.AddOpenTelemetry()
             .SetResourceBuilder(ResourceBuilderHelper.CreateResourceBuilder(typeof(Program)))
             .AddMeter(OtelMetrics.MeterName)
             .AddInstrumentation<OtelMetrics>()
-            .AddProcessInstrumentation()
-            .AddRuntimeInstrumentation()
             .AddUpTimeInstrumentation()
             .AddPrometheusExporter()
             .AddOtlpExporter(op =>

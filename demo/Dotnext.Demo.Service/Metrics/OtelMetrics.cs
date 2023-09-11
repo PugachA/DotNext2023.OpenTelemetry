@@ -25,6 +25,7 @@ public class OtelMetrics : IDisposable
         HandlerDurationGauge = new Gauge<long>(
             _meter, "handler.duration", "ms", "Handle duration milliseconds");
 
+        #region worker
         WorkerSuccessCounter = _meter.CreateCounter<long>(
             "worker.success", "count", "The number of worker success execution");
 
@@ -33,6 +34,7 @@ public class OtelMetrics : IDisposable
 
         WorkerDurationGauge = new Gauge<long>(
             _meter, "worker.duration", "ms", "Worker run duration milliseconds");
+        #endregion
 
         HealthCheckGauge = new Gauge<long>(
             _meter, "health.check", description: "Health check status");

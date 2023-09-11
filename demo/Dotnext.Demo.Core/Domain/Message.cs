@@ -1,8 +1,7 @@
 ﻿#pragma warning disable CS8618
-#pragma warning disable VSSpell001 // Spell Check
 
 namespace Dotnext.Demo.Core.Domain;
-public class IMessage
+public class Message
 {
     public string MessageId { get; set; }
 
