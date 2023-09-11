@@ -1,7 +1,7 @@
 ﻿#pragma warning disable CS8618
 
 namespace Dotnext.Demo.Core.Domain;
-public class Message
+public interface IMessage
 {
     public string MessageId { get; set; }
 
